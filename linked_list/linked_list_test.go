@@ -75,4 +75,48 @@ func TestLinkedList_Add(t *testing.T) {
 	if list.head.Value != 1 {
 		t.Error("head value should be 1")
 	}
+
+	if list.tail.Value != 2 {
+		t.Error("tail value should be 2")
+	}
+
+	if list.head.Next.Value != 2 {
+		t.Error("head next should be 2")
+	}
+}
+
+func TestLinkedList_GetAt(t *testing.T) {
+	t.Run("when list is empty", func(t *testing.T) {
+		list := NewComparableLinkedList[int]()
+
+		var zero int
+
+		item, found := list.GetAt(0)
+
+		if found == true {
+			t.Error("found should be false")
+		}
+
+		if zero != item {
+			t.Error("value should be zero")
+		}
+	})
+
+	t.Run("when there are items in the list", func(t *testing.T) {
+		list := NewComparableLinkedList[int]()
+
+		list.Add(3)
+		list.Add(33)
+		list.Add(55)
+		list.Add(378)
+
+		if val, found := list.GetAt(0); val != 3 || found == false {
+			t.Error("value should be 3 and found should be true")
+		}
+
+		if val, found := list.GetAt(3); val != 378 || found == false {
+			t.Errorf("Value = %v & found = %v", val, found)
+			t.Error("value should be 378 and found should be true")
+		}
+	})
 }

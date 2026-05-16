@@ -43,6 +43,30 @@ func newNode[T any](value T) *Node[T] {
 	}
 }
 
+func (list *LinkedList[T]) GetAt(index int) (T, bool) {
+	if list.size == 0 || index < 0 || index > list.size {
+		var zero T
+		return zero, false
+	}
+
+	// this is inefficient best and worst case O(N)
+	//list.ForEachWithIndex(func(val T, idx int) {
+	//	if idx == index {
+	//		found = true
+	//		value = val
+	//		return
+	//	}
+	//})
+
+	current := list.head
+
+	for i := 0; i < index; i++ {
+		current = current.Next
+	}
+
+	return current.Value, true
+}
+
 func (list *LinkedList[T]) Add(item T) bool {
 	node := newNode(item)
 
@@ -57,6 +81,7 @@ func (list *LinkedList[T]) Add(item T) bool {
 	list.tail.Next = node
 	node.Previous = tail
 	list.tail = node
+	list.size++
 
 	return true
 }
