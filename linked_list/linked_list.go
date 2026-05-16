@@ -1,6 +1,9 @@
 package linked_list
 
-import "fmt"
+import (
+	"cmp"
+	"fmt"
+)
 
 type Node[T any] struct {
 	Value    T
@@ -9,29 +12,35 @@ type Node[T any] struct {
 }
 
 type LinkedList[T any] struct {
-	head  *Node[T]
-	tail  *Node[T]
-	size  int
-	Equal func(a T, b T) bool
+	head    *Node[T]
+	tail    *Node[T]
+	size    int
+	Compare func(a T, b T) int
 }
 
-func NewComparableLinkedList[T comparable]() *LinkedList[T] {
+func NewComparableLinkedList[T cmp.Ordered]() *LinkedList[T] {
 	return &LinkedList[T]{
 		head: nil,
 		tail: nil,
 		size: 0,
-		Equal: func(a, b T) bool {
-			return a == b
+		Compare: func(a, b T) int {
+			if a < b {
+				return -1
+			} else if a > b {
+				return 1
+			}
+
+			return 0
 		},
 	}
 }
 
-func NewLinkedList[T any](equal func(a, b T) bool) *LinkedList[T] {
+func NewLinkedList[T any](cmp func(a, b T) int) *LinkedList[T] {
 	return &LinkedList[T]{
-		head:  nil,
-		tail:  nil,
-		size:  0,
-		Equal: equal,
+		head:    nil,
+		tail:    nil,
+		size:    0,
+		Compare: cmp,
 	}
 }
 
@@ -141,7 +150,7 @@ func (list *LinkedList[T]) Last() (T, bool) {
 
 // Map Applies fn to every element in the list and returns a new list
 func (list *LinkedList[T]) Map(fn func(item T) T) *LinkedList[T] {
-	newList := NewLinkedList[T](list.Equal)
+	newList := NewLinkedList[T](list.Compare)
 
 	list.ForEach(func(item T) {
 		newItem := fn(item)
@@ -152,7 +161,7 @@ func (list *LinkedList[T]) Map(fn func(item T) T) *LinkedList[T] {
 }
 
 func (list *LinkedList[T]) Filter(predicateFn func(item T) bool) *LinkedList[T] {
-	newList := NewLinkedList[T](list.Equal)
+	newList := NewLinkedList[T](list.Compare)
 
 	list.ForEach(func(item T) {
 		if predicateFn(item) {
@@ -171,4 +180,38 @@ func (list *LinkedList[T]) Reduce(acc T, fn func(acc T, item T) T) T {
 	})
 
 	return newValue
+}
+
+func (list *LinkedList[T]) IsPresent(item T) bool {
+	isPresent := false
+
+	list.iterator(func(itemHere T) bool {
+		if list.Compare(item, itemHere) == 0 {
+			isPresent = true
+			return true // Break outer loop and return from iterator
+		}
+
+		return false
+	})
+
+	return isPresent
+}
+
+// iterator Trying to make an efficient iterator, which is breakable
+func (list *LinkedList[T]) iterator(fn func(item T) bool) {
+	if list.head == nil {
+		return
+	}
+
+	current := list.head
+
+	for current != nil {
+		shouldBreak := fn(current.Value)
+
+		if shouldBreak {
+			return
+		}
+
+		current = current.Next
+	}
 }

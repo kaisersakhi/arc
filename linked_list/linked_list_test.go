@@ -27,11 +27,11 @@ func TestNewComparableLinkedList(t *testing.T) {
 
 		t.Run("Equal should be set to default", func(t *testing.T) {
 			var list *LinkedList[int] = NewComparableLinkedList[int]()
-			if list.Equal == nil {
+			if list.Compare == nil {
 				t.Error("Equal should not be nil")
 			}
 
-			if list.Equal(1, 1) == false {
+			if list.Compare(1, 1) != 0 {
 				t.Error("Equal should equal true")
 			}
 		})
@@ -118,5 +118,40 @@ func TestLinkedList_GetAt(t *testing.T) {
 			t.Errorf("Value = %v & found = %v", val, found)
 			t.Error("value should be 378 and found should be true")
 		}
+	})
+}
+
+func TestNewLinkedList(t *testing.T) {
+	type User struct {
+		Name string
+		ID   int
+	}
+
+	t.Run("When type is non-primitive", func(t *testing.T) {
+		t.Run("it should take Equals for comparing", func(t *testing.T) {
+			var userList = NewLinkedList[User](func(a, b User) int {
+				if a.ID < b.ID {
+					return -1
+				} else if a.ID > b.ID {
+					return 1
+				}
+
+				return 0
+			})
+
+			userList.Add(User{
+				Name: "Kaiser",
+				ID:   22,
+			})
+
+			userList.Add(User{
+				Name: "Sakhi",
+				ID:   23,
+			})
+
+			if !userList.IsPresent(User{"", 23}) {
+				t.Error("user should be present in the list")
+			}
+		})
 	})
 }
