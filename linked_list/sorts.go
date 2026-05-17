@@ -40,20 +40,23 @@ func merge[T any](left *Node[T], right *Node[T], list *LinkedList[T]) *Node[T] {
 		case -1:
 			// Left is lesser
 			current.Next = leftCurrent
+			leftCurrent.Previous = current
 			leftCurrent = leftCurrent.Next
 		case 1:
 			// Right is lesser
 			current.Next = rightCurrent
+			rightCurrent.Previous = current
 			rightCurrent = rightCurrent.Next
-
 		case 0:
 			// Both are equal, append both
 			current.Next = leftCurrent
+			leftCurrent.Previous = current
 			leftCurrent = leftCurrent.Next
 
 			current = current.Next
 
 			current.Next = rightCurrent
+			rightCurrent.Previous = current
 			rightCurrent = rightCurrent.Next
 		}
 
@@ -63,13 +66,18 @@ func merge[T any](left *Node[T], right *Node[T], list *LinkedList[T]) *Node[T] {
 	// check directly append either of the remaining sub-lists
 	if leftCurrent != nil {
 		current.Next = leftCurrent
+		leftCurrent.Previous = current
 	}
 
 	if rightCurrent != nil {
 		current.Next = rightCurrent
+		rightCurrent.Previous = current
 	}
 
-	return newHead.Next
+	newNodeHead := newHead.Next
+	newNodeHead.Previous = nil
+
+	return newNodeHead
 }
 
 func split[T any](node *Node[T]) (*Node[T], *Node[T]) {
