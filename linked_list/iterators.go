@@ -71,6 +71,15 @@ func (list *LinkedList[T]) Reduce(acc T, fn func(acc T, item T) T) T {
 	return newValue
 }
 
+func (list *LinkedList[T]) ReverseForEach(fn func(item T)) {
+	current := list.tail
+
+	for current != nil {
+		fn(current.Value)
+		current = current.Previous
+	}
+}
+
 // iterator Trying to make an efficient iterator, which is breakable
 func (list *LinkedList[T]) iterator(fn func(item T) bool) {
 	if list.head == nil {

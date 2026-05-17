@@ -3,25 +3,25 @@ package linked_list
 func (list *LinkedList[T]) Sort() *LinkedList[T] {
 	newList := list.Duplicate()
 
-	newList.head = mergeSort(list.head, list)
+	newList.head, newList.tail = mergeSort(list.head, list.Compare)
 
 	return newList
 }
 
-func mergeSort[T any](node *Node[T], list *LinkedList[T]) *Node[T] {
+func mergeSort[T any](node *Node[T], compare func(a, b T) int) (*Node[T], *Node[T]) {
 	if node == nil || node.Next == nil {
-		return node
+		return node, node
 	}
 
 	left, right := split(node)
 
-	left = mergeSort(left, list)
-	right = mergeSort(right, list)
+	left, _ = mergeSort(left, compare)
+	right, _ = mergeSort(right, compare)
 
-	return merge(left, right, list)
+	return merge(left, right, compare)
 }
 
-func merge[T any](left *Node[T], right *Node[T], list *LinkedList[T]) *Node[T] {
+func merge[T any](left *Node[T], right *Node[T], compare func(a, b T) int) (*Node[T], *Node[T]) {
 	// What do i want to do here?
 
 	//1. Left or Right can be 0, 1 or N
@@ -36,7 +36,7 @@ func merge[T any](left *Node[T], right *Node[T], list *LinkedList[T]) *Node[T] {
 	rightCurrent := right
 
 	for leftCurrent != nil && rightCurrent != nil {
-		switch list.Compare(leftCurrent.Value, rightCurrent.Value) {
+		switch compare(leftCurrent.Value, rightCurrent.Value) {
 		case -1:
 			// Left is lesser
 			current.Next = leftCurrent
@@ -67,6 +67,7 @@ func merge[T any](left *Node[T], right *Node[T], list *LinkedList[T]) *Node[T] {
 	if leftCurrent != nil {
 		current.Next = leftCurrent
 		leftCurrent.Previous = current
+
 	}
 
 	if rightCurrent != nil {
@@ -77,7 +78,11 @@ func merge[T any](left *Node[T], right *Node[T], list *LinkedList[T]) *Node[T] {
 	newNodeHead := newHead.Next
 	newNodeHead.Previous = nil
 
-	return newNodeHead
+	for current.Next != nil {
+		current = current.Next
+	}
+
+	return newNodeHead, current
 }
 
 func split[T any](node *Node[T]) (*Node[T], *Node[T]) {

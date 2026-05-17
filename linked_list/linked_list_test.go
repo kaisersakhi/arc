@@ -1,6 +1,9 @@
 package linked_list
 
-import "testing"
+import (
+	"slices"
+	"testing"
+)
 
 func TestNewComparableLinkedList(t *testing.T) {
 	t.Run("when newly created", func(t *testing.T) {
@@ -202,6 +205,64 @@ func TestLinkedList_Sort(t *testing.T) {
 
 			if val1 != 0 || val2 != 2 || val3 != 3 || val4 != 55 {
 				t.Error("list should be sorted")
+			}
+		})
+	})
+}
+
+func TestLinkedList_ReverseForEach(t *testing.T) {
+	t.Run("when reversed is directly called", func(t *testing.T) {
+		list := NewComparableLinkedList[int]()
+
+		list.Add(3)
+		list.Add(55)
+		list.Add(2)
+		list.Add(0)
+
+		collected := make([]int, 0, 4)
+
+		list.ReverseForEach(func(item int) {
+			collected = append(collected, item)
+		})
+
+		if !slices.Equal(collected, []int{0, 2, 55, 3}) {
+			t.Error("the collection should be reversed")
+		}
+	})
+
+	t.Run("when reverse for each is done after sorting", func(t *testing.T) {
+		t.Run("it should return the list in reverse sorted form", func(t *testing.T) {
+			list := NewComparableLinkedList[int]()
+
+			list.Add(3)
+			list.Add(55)
+			list.Add(2)
+			list.Add(0)
+
+			sortedList := list.Sort()
+
+			if sortedList.size != 4 {
+				t.Error("list size should be same as the orignal")
+			}
+
+			val1, _ := sortedList.GetAt(0)
+			val2, _ := sortedList.GetAt(1)
+			val3, _ := sortedList.GetAt(2)
+			val4, _ := sortedList.GetAt(3)
+
+			if val1 != 0 || val2 != 2 || val3 != 3 || val4 != 55 {
+				t.Error("list should be sorted")
+			}
+
+			collected := make([]int, 0, 4)
+
+			sortedList.ReverseForEach(func(item int) {
+				collected = append(collected, item)
+			})
+
+			if !slices.Equal(collected, []int{55, 3, 2, 0}) {
+				t.Errorf("%v", collected)
+				t.Error("the list should be sorted and reversed")
 			}
 		})
 	})
