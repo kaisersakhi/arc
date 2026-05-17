@@ -155,3 +155,54 @@ func TestNewLinkedList(t *testing.T) {
 		})
 	})
 }
+
+// For testing, I am not going to expose FindMid
+//func TestLinkedList_FindMid(t *testing.T) {
+//	t.Run("when there are many items in the list", func(t *testing.T) {
+//		t.Run("it returns mid", func(t *testing.T) {
+//			list := NewComparableLinkedList[int]()
+//
+//			list.Add(1)
+//			list.Add(2)
+//			list.Add(3)
+//
+//			node := list.FindMid()
+//
+//			if node.Value != 2 {
+//				t.Error("mid value should be 2")
+//			}
+//		})
+//	})
+//}
+
+func TestLinkedList_Sort(t *testing.T) {
+	t.Run("when list is empty", func(t *testing.T) {
+
+	})
+
+	t.Run("when list is not empty", func(t *testing.T) {
+		t.Run("it sorts the list in asscending order", func(t *testing.T) {
+			list := NewComparableLinkedList[int]()
+
+			list.Add(3)
+			list.Add(55)
+			list.Add(2)
+			list.Add(0)
+
+			sortedList := list.Sort()
+
+			if sortedList.size != 4 {
+				t.Error("list size should be same as the orignal")
+			}
+
+			val1, _ := sortedList.GetAt(0)
+			val2, _ := sortedList.GetAt(1)
+			val3, _ := sortedList.GetAt(2)
+			val4, _ := sortedList.GetAt(3)
+
+			if val1 != 0 || val2 != 2 || val3 != 3 || val4 != 55 {
+				t.Error("list should be sorted")
+			}
+		})
+	})
+}
