@@ -3,7 +3,7 @@ package linked_list
 func (list *LinkedList[T]) Sort() *LinkedList[T] {
 	newList := list.Duplicate()
 
-	newList.head, newList.tail = mergeSort(list.head, list.Compare)
+	newList.head, newList.tail = mergeSort(newList.head, newList.Compare)
 
 	return newList
 }

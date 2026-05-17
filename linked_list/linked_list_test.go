@@ -5,6 +5,90 @@ import (
 	"testing"
 )
 
+func makeList(n int) *LinkedList[int] {
+	ll := NewComparableLinkedList[int]()
+	for i := n; i > 0; i-- {
+		ll.Append(i)
+	}
+	return ll
+}
+
+func BenchmarkAppend(b *testing.B) {
+	for b.Loop() {
+		ll := NewComparableLinkedList[int]()
+		for i := 0; i < 1000; i++ {
+			ll.Append(i)
+		}
+	}
+}
+
+func BenchmarkPrepend(b *testing.B) {
+	for b.Loop() {
+		ll := NewComparableLinkedList[int]()
+		for i := 0; i < 1000; i++ {
+			ll.Prepend(i)
+		}
+	}
+}
+
+func BenchmarkGetAt(b *testing.B) {
+	ll := makeList(1000)
+	b.ResetTimer()
+	for b.Loop() {
+		ll.GetAt(500)
+	}
+}
+
+func BenchmarkIsPresent(b *testing.B) {
+	ll := makeList(1000)
+	b.ResetTimer()
+	for b.Loop() {
+		ll.IsPresent(500)
+	}
+}
+
+func BenchmarkSort100(b *testing.B) {
+	ll := makeList(100)
+	b.ResetTimer()
+	for b.Loop() {
+		ll.Sort()
+	}
+}
+
+func BenchmarkSort1000(b *testing.B) {
+	ll := makeList(1000)
+	b.ResetTimer()
+	for b.Loop() {
+		ll.Sort()
+	}
+}
+
+func BenchmarkSort10000(b *testing.B) {
+	ll := makeList(10000)
+	b.ResetTimer()
+	for b.Loop() {
+		ll.Sort()
+	}
+}
+
+func BenchmarkPopStart(b *testing.B) {
+	for b.Loop() {
+		ll := makeList(1000)
+		for ll.Size() > 0 {
+			ll.PopStart()
+		}
+	}
+}
+
+func BenchmarkPopEnd(b *testing.B) {
+	for b.Loop() {
+		ll := makeList(1000)
+		for ll.Size() > 0 {
+			ll.PopEnd()
+		}
+	}
+}
+
 func TestNewComparableLinkedList(t *testing.T) {
 	t.Run("when newly created", func(t *testing.T) {
 		t.Run("head should be nil", func(t *testing.T) {
