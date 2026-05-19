@@ -30,6 +30,6 @@ func (stack *StackLL[T]) GetAt(idx int) (T, bool) {
 	return stack.list.GetAt(idx)
 }
 
-//func (stack *StackLL[T]) Peek() (T, error) {
-//	return
-//}
+func (stack *StackLL[T]) Peek() (T, bool) {
+	return stack.list.Last()
+}
